@@ -1,7 +1,6 @@
 numpy
 scipy
 pyflann
-opencv
-pytorch-cpu torchvision-cpu
+opencv-python
 torch
 Pillow

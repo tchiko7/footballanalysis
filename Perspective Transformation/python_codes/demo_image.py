@@ -154,7 +154,7 @@ def testing_two_GAN(image,directory):
         image=Image.fromarray(image)
         osize = [256,256]
         cropsize = osize
-        image=transforms.Compose([transforms.Scale(osize, Image.BICUBIC),transforms.RandomCrop(cropsize),transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5),(0.5, 0.5, 0.5))])(image)
+        image=transforms.Compose([transforms.Resize(osize, Image.BICUBIC),transforms.RandomCrop(cropsize),transforms.ToTensor(),transforms.Normalize((0.5, 0.5, 0.5),(0.5, 0.5, 0.5))])(image)
         image=image.unsqueeze(0)        
             
         model.set_input(image)        
@@ -214,15 +214,15 @@ print("current_directory is: "+ current_directory)
 # database
 
 if feature_type == "deep":
-    deep_database_directory = current_directory + "/data_2/features/feature_camera_91k.mat"
+    deep_database_directory = os.path.join(current_directory, 'data_2', 'features', 'feature_camera_91k.mat')
     #
     data=sio.loadmat(deep_database_directory)
     database_features = data['features']
     database_cameras = data['cameras']
 
 else: #HOG feature database
+    HOG_database_directory = os.path.join(current_directory, 'data_2', 'features', 'database_camera_feature_HoG.mat')
 
-    HOG_database_directory = current_directory + "/data_2/features/database_camera_feature_HoG.mat"
     data = sio.loadmat(HOG_database_directory)
     database_features=data['features']
     database_cameras = data['cameras']
@@ -250,7 +250,7 @@ edge_map , seg_map = testing_two_GAN (image,current_directory)
 
 #################### getting  deep features from edge image ###########################
 if feature_type == "deep":
-    deep_model_directory = current_directory + "/deep/deep_network.pth"
+    deep_model_directory = os.path.join(current_directory, 'deep', 'deep_network.pth')
     test_features = generate_deep_feature(edge_map , deep_model_directory)
 
 else: #HOG feature
@@ -259,7 +259,7 @@ else: #HOG feature
 #--------------------------------------------------------------------------------------------------------    
 
 # World Cup soccer template
-data = sio.loadmat(current_directory + "/data_2/worldcup2014.mat")
+data = sio.loadmat(os.path.join(current_directory, "data_2", "worldcup2014.mat"))
 model_points = data['points']
 model_line_index = data['line_segment_index']
 
@@ -335,7 +335,7 @@ if address_args.advertising_image :
 
     im_out_2 = cv.addWeighted(image,0.8,im_out_2,0.3,0)
 
-    cv.imwrite(current_directory + "/overlayed_image.jpg", im_out_2)
+    cv.imwrite(os.path.join(current_directory, "overlayed_image.jpg"), im_out_2)
 
     #cv.imshow("ss",im_out_2 )
     #cv.waitKey()
@@ -350,7 +350,7 @@ print("--- %s seconds ---" % (time.time() - start_time))
 
 # Display images
 
-model_address=current_directory + "/model.jpg"
+model_address=os.path.join(current_directory, "model.jpg")
 model_image=cv.imread(model_address)
 model_image=cv.resize(model_image,(115,74))
 
@@ -358,8 +358,8 @@ new_image=cv.addWeighted(model_image,1,im_out,1,0)
 
 
 
-cv.imwrite(current_directory + "/warped_image.jpg", new_image)
-cv.imwrite(current_directory + "/retrieved_image.jpg", retrieved_image )
+cv.imwrite(os.path.join(current_directory, "warped_image.jpg"), new_image)
+cv.imwrite(os.path.join(current_directory, "retrieved_image.jpg"), retrieved_image )
 
 
 #cv.imshow("Source Image", image)
