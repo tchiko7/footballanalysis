@@ -236,6 +236,7 @@ start_time = time.time() ## ===> for measuring execution time
 ################################################ CHOOSE WHAT IMAGE DO YOU WANT TO LOAD #############################################
 
 image = cv.imread(address_args.image)#
+imsize = image.shape
 
 #####################################################################################################################################
 
@@ -315,10 +316,18 @@ h_retrieved_to_query = SyntheticUtil.find_transform(retrieved_dist, query_dist)
 refined_h = h_retrieved_to_query@retrieved_h
 ####################################################################################################################
 ## Warp source image to destination based on homography
+homomatrix = np.linalg.inv(refined_h)
+# homomatrix = refined_h
+pointX = 259
+pointY = 293
+newPointX = (pointX / imsize[1]) * 1280
+newPointY = (pointY / imsize[0]) * 720
+pointToConvert = np.array([newPointX, newPointY, 1])
+
+transformedCoord = np.matmul(homomatrix, pointToConvert)
+print(transformedCoord/transformedCoord[2])
+
 im_out = cv.warpPerspective(seg_map, np.linalg.inv(refined_h), (115,74), borderMode=cv.BORDER_CONSTANT)
-
-
-
 
 
 ############################################ STEP 4 : billboard warping #######################################
